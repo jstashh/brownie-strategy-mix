@@ -6,15 +6,15 @@ import pytest
 
 
 def test_vault_shutdown_can_withdraw(
-    chain, token, vault, strategy, user, amount, RELATIVE_APPROX
+    chain, token, vault, strategy, whale, amount, RELATIVE_APPROX
 ):
     ## Deposit in Vault
-    token.approve(vault.address, amount, {"from": user})
-    vault.deposit(amount, {"from": user})
+    token.approve(vault.address, amount, {"from": whale})
+    vault.deposit(amount, {"from": whale})
     assert token.balanceOf(vault.address) == amount
 
-    if token.balanceOf(user) > 0:
-        token.transfer(ZERO_ADDRESS, token.balanceOf(user), {"from": user})
+    if token.balanceOf(whale) > 0:
+        token.transfer(ZERO_ADDRESS, token.balanceOf(whale), {"from": whale})
 
     # Harvest 1: Send funds through the strategy
     strategy.harvest()
@@ -26,17 +26,17 @@ def test_vault_shutdown_can_withdraw(
     vault.setEmergencyShutdown(True)
 
     ## Withdraw (does it work, do you get what you expect)
-    vault.withdraw({"from": user})
+    vault.withdraw({"from": whale})
 
-    assert pytest.approx(token.balanceOf(user), rel=RELATIVE_APPROX) == amount
+    assert pytest.approx(token.balanceOf(whale), rel=RELATIVE_APPROX) == amount
 
 
 def test_basic_shutdown(
-    chain, token, vault, strategy, user, strategist, amount, RELATIVE_APPROX
+    chain, token, vault, strategy, whale, strategist, amount, RELATIVE_APPROX
 ):
     # Deposit to the vault
-    token.approve(vault.address, amount, {"from": user})
-    vault.deposit(amount, {"from": user})
+    token.approve(vault.address, amount, {"from": whale})
+    vault.deposit(amount, {"from": whale})
     assert token.balanceOf(vault.address) == amount
 
     # Harvest 1: Send funds through the strategy
