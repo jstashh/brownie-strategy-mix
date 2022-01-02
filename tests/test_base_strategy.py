@@ -1,11 +1,7 @@
 import pytest
 
 
-def test_base_strategy(
-    gov,
-    strategy,
-    chain
-):
+def test_base_strategy(gov, strategy, chain):
     # we've harvested immediately after the strategy was deployed so the trigger should be false
     assert strategy.harvestTrigger(0, {"from": gov}) == False
 

@@ -22,27 +22,28 @@ contract StrategyCurveSpell is BaseStrategy {
     // these will likely change across different wants.
 
     // the rewards contract we deposit into and harvest SPELL from
-    ISorbettiere public sorbettiere =
+    ISorbettiere internal constant sorbettiere =
         ISorbettiere(0x37Cf490255082ee50845EA4Ff783Eb9b6D1622ce);
 
     // used as the intermediary for selling spell into an underlying token of the curve pool
-    IERC20 public constant wftm =
+    IERC20 internal constant wftm =
         IERC20(0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83);
 
     // we use these to deposit to our curve pool
-    IERC20 public constant mim =
+    IERC20 internal constant mim =
         IERC20(0x82f0B8B456c1A451378467398982d4834b6829c1);
-    IERC20 public constant fusdt =
+    IERC20 internal constant fusdt =
         IERC20(0x049d68029688eAbF473097a2fC38ef61633A3C7A);
-    IERC20 public constant usdc =
+    IERC20 internal constant usdc =
         IERC20(0x04068DA6C83AFCFA0e13ba15A6696662335D5B75);
 
-    IERC20 public constant spell =
+    IERC20 internal constant spell =
         IERC20(0x468003B688943977e6130F4F68F23aad939a1040);
     IUniswapV2Router02 public router =
         IUniswapV2Router02(0xF491e7B69E4244ad4002BC14e878a34207E38c29); // this is the router we swap with, start with spookyswap
 
     address public targetToken; // this is the token we sell into - MIM, USDC, or fUSDT
+
     uint256 internal poolId; // the pool we are depositing into in the rewards contract
     string internal stratName; // set our strategy name here
     bool internal forceHarvestTriggerOnce; // only set this to true externally when we want to trigger our keepers to harvest for us
@@ -298,7 +299,7 @@ contract StrategyCurveSpell is BaseStrategy {
 
     // These functions are useful for setting parameters of the strategy that may need to be adjusted.
     // Set optimal token to sell harvested funds for depositing to Curve.
-    // Default is fUSDT, but can be set to USDC or DAI as needed by strategist or governance.
+    // Default is MIM, but can be set to USDC or fUSDT as needed by strategist or governance.
     function setOptimal(uint256 _optimal) external onlyAuthorized {
         if (_optimal == 0) {
             targetToken = address(mim);

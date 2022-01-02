@@ -14,7 +14,7 @@ def test_simple_harvest(
     amount,
     sorbettiere,
     sorbettiere_owner,
-    pool_id
+    pool_id,
 ):
     # extend the reward date of the sorbettiere in case it is set to expire soon
     sorbettiere.changeEndTime(8640000, {"from": sorbettiere_owner})
