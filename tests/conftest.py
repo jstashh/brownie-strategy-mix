@@ -3,9 +3,11 @@ from brownie import config
 from brownie import Contract
 from brownie import chain
 
+
 @pytest.fixture(autouse=True)
 def isolation(fn_isolation):
     pass
+
 
 @pytest.fixture(scope="module")
 def gov(accounts):
@@ -47,9 +49,11 @@ def amount():
     amount = 10_000e18
     yield amount
 
+
 @pytest.fixture(scope="module")
 def sorbettiere():
     yield Contract("0x37Cf490255082ee50845EA4Ff783Eb9b6D1622ce")
+
 
 @pytest.fixture(scope="module")
 def sorbettiere_owner(accounts):
@@ -68,12 +72,13 @@ def curve_lp(accounts):
 
 @pytest.fixture
 def token():
-    token_address = "0x2dd7C9371965472E5A5fD28fbE165007c61439E1" # Mim-2Pool
+    token_address = "0x2dd7C9371965472E5A5fD28fbE165007c61439E1"  # Mim-2Pool
     yield Contract(token_address)
+
 
 @pytest.fixture
 def farmed():
-    yield Contract("0x468003B688943977e6130F4F68F23aad939a1040") # spell
+    yield Contract("0x468003B688943977e6130F4F68F23aad939a1040")  # spell
 
 
 @pytest.fixture
@@ -105,16 +110,28 @@ def strategy_name():
     strategy_name = "StrategyCurveSpell"
     yield strategy_name
 
+
 @pytest.fixture(scope="module")
 def pool_id():
     yield 0
+
 
 @pytest.fixture(scope="module")
 def healthCheck():
     yield Contract("0xf13Cd6887C62B5beC145e30c38c4938c5E627fe0")
 
+
 @pytest.fixture
-def strategy(strategist, keeper, vault, StrategyCurveSpell, gov, strategy_name, pool_id, healthCheck):
+def strategy(
+    strategist,
+    keeper,
+    vault,
+    StrategyCurveSpell,
+    gov,
+    strategy_name,
+    pool_id,
+    healthCheck,
+):
     strategy = strategist.deploy(StrategyCurveSpell, vault, pool_id, strategy_name)
     strategy.setKeeper(keeper, {"from": gov})
     vault.setManagementFee(0, {"from": gov})

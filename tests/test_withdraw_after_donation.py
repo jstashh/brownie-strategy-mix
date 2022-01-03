@@ -416,15 +416,7 @@ def test_withdraw_after_donation_6(
 
 # lower debtRatio to 0, donate, withdraw more than the donation, then harvest
 def test_withdraw_after_donation_7(
-    gov,
-    token,
-    vault,
-    whale,
-    strategy,
-    chain,
-    amount,
-    sorbettiere, 
-    pool_id
+    gov, token, vault, whale, strategy, chain, amount, sorbettiere, pool_id
 ):
 
     ## deposit to the vault after approving
@@ -499,15 +491,7 @@ def test_withdraw_after_donation_7(
 
 # lower debtRatio to 0, donate, withdraw more than the donation, then harvest
 def test_withdraw_after_donation_8(
-    gov,
-    token,
-    vault,
-    whale,
-    strategy,
-    chain,
-    amount,
-    sorbettiere,
-    pool_id
+    gov, token, vault, whale, strategy, chain, amount, sorbettiere, pool_id
 ):
 
     ## deposit to the vault after approving
