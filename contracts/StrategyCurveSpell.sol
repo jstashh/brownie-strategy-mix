@@ -95,8 +95,6 @@ contract StrategyCurveSpell is BaseStrategy {
         if (_stakedBal > 0) {
             sorbettiere.withdraw(poolId, _stakedBal);
         }
-
-        // todo - sell any claimed spell here?
     }
 
     function protectedTokens()
@@ -240,8 +238,6 @@ contract StrategyCurveSpell is BaseStrategy {
         if (_stakedBal > 0) {
             sorbettiere.withdraw(poolId, _stakedBal);
         }
-
-        // todo - sell any claimed spell here?
 
         return balanceOfWant();
     }
