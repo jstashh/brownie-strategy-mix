@@ -33,4 +33,6 @@ interface ISorbettiere {
         external
         view
         returns (UserInfo memory);
+
+    function emergencyWithdraw(uint256 _pid) external;
 }

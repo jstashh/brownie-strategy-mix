@@ -90,6 +90,11 @@ contract StrategyCurveSpell is BaseStrategy {
     /* ========== MUTATIVE FUNCTIONS ========== */
     // these will likely change across different wants.
 
+    ///@notice Only do this if absolutely necessary; as assets will be withdrawn but rewards won't be claimed.
+    function emergencyWithdraw() external onlyEmergencyAuthorized {
+        sorbettiere.emergencyWithdraw(poolId);
+    }
+
     function prepareMigration(address _newStrategy) internal override {
         uint256 _stakedBal = stakedBalance();
         if (_stakedBal > 0) {
