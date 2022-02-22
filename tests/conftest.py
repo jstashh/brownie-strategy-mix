@@ -41,7 +41,7 @@ def strategist(accounts):
 
 @pytest.fixture(scope="module")
 def whale(accounts):
-    yield accounts.at("0x73c18D7CA84afc41863b32085ecEFaE4bAC9DF3d", force=True)
+    yield accounts.at("0xDbE692E262bD186Cab4E7e1bc0ecd4c3d4252DA1", force=True)
 
 
 @pytest.fixture(scope="module")

@@ -95,6 +95,9 @@ contract StrategyCurveSpell is BaseStrategy {
         if (_stakedBal > 0) {
             sorbettiere.withdraw(poolId, _stakedBal);
         }
+
+        uint256 spellBalance = spell.balanceOf(address(this));
+        spell.transfer(_newStrategy, spellBalance);
     }
 
     function protectedTokens()

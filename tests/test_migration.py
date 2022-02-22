@@ -16,6 +16,7 @@ def test_migration(
     healthCheck,
     amount,
     strategy_name,
+    farmed
 ):
 
     ## deposit to the vault after approving
@@ -43,6 +44,11 @@ def test_migration(
     vault.migrateStrategy(strategy, new_strategy, {"from": gov})
     new_strategy.setHealthCheck(healthCheck, {"from": gov})
     new_strategy.setDoHealthCheck(True, {"from": gov})
+
+    # assert that some of the farmed asset has been
+    # transfered from the old strategy to the new one
+    farmed_balance = farmed.balanceOf(new_strategy)
+    assert farmed_balance > 0
 
     # assert that our old strategy is empty
     updated_total_old = strategy.estimatedTotalAssets()
