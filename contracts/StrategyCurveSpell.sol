@@ -98,9 +98,11 @@ contract StrategyCurveSpell is BaseStrategy {
     }
 
     function prepareMigration(address _newStrategy) internal override {
-        uint256 _stakedBal = stakedBalance();
-        if (_stakedBal > 0) {
-            sorbettiere.withdraw(poolId, _stakedBal);
+        if (withdrawStakedOnMigration) {
+            uint256 _stakedBal = stakedBalance();
+            if (_stakedBal > 0) {
+                sorbettiere.withdraw(poolId, _stakedBal);
+            }
         }
 
         uint256 _spellBalance = spell.balanceOf(address(this));
