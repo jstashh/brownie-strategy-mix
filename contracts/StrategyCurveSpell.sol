@@ -47,7 +47,8 @@ contract StrategyCurveSpell is BaseStrategy {
     uint256 internal poolId; // the pool we are depositing into in the rewards contract
     string internal stratName; // set our strategy name here
     bool internal forceHarvestTriggerOnce; // only set this to true externally when we want to trigger our keepers to harvest for us
-    bool internal withdrawStakedOnMigration; // set to true to withdraw the deposited lp tokens before migration
+    bool internal withdrawStakedOnMigration = true; // set to true to withdraw the deposited lp tokens before migration
+    bool internal shouldSellSpell = true; // set to true to sell any farmed spell
 
     /* ========== CONSTRUCTOR ========== */
 
@@ -130,6 +131,13 @@ contract StrategyCurveSpell is BaseStrategy {
         forceHarvestTriggerOnce = _forceHarvestTriggerOnce;
     }
 
+    function setShouldSellSpell(bool _shouldSellSpell)
+        external
+        onlyEmergencyAuthorized
+    {
+        shouldSellSpell = _shouldSellSpell;
+    }
+
     function adjustPosition(uint256 _debtOutstanding) internal override {
         if (emergencyExit) {
             return;
@@ -179,10 +187,12 @@ contract StrategyCurveSpell is BaseStrategy {
         // harvest our rewards from the staking contract
         sorbettiere.withdraw(poolId, 0);
 
-        uint256 spellBalance = spell.balanceOf(address(this));
-        // sell SPELL if we have any
-        if (spellBalance > 0) {
-            _sellSpell(spellBalance);
+        if (shouldSellSpell) {
+            uint256 spellBalance = spell.balanceOf(address(this));
+            // sell SPELL if we have any
+            if (spellBalance > 0) {
+                _sellSpell(spellBalance);
+            }
         }
 
         uint256 mimBalance = mim.balanceOf(address(this));
