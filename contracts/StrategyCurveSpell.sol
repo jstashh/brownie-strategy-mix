@@ -105,7 +105,7 @@ contract StrategyCurveSpell is BaseStrategy {
 
         uint256 _spellBalance = spell.balanceOf(address(this));
         if (_spellBalance > 0) {
-            spell.transfer(_newStrategy, spellBalance);
+            spell.transfer(_newStrategy, _spellBalance);
         }
     }
 
