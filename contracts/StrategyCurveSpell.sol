@@ -231,7 +231,8 @@ contract StrategyCurveSpell is BaseStrategy {
             uint256 _wantBal = balanceOfWant();
             if (_profit.add(_debtPayment) > _wantBal) {
                 // this should only be hit following donations to strategy
-                liquidateAllPositions();
+                uint256 _toLiquidate = _profit.add(_debtPayment);
+                liquidatePosition(_toLiquidate);
             }
         }
         // if assets are less than debt, we are in trouble
