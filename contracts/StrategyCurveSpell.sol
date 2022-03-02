@@ -47,6 +47,7 @@ contract StrategyCurveSpell is BaseStrategy {
     uint256 internal poolId; // the pool we are depositing into in the rewards contract
     string internal stratName; // set our strategy name here
     bool internal forceHarvestTriggerOnce; // only set this to true externally when we want to trigger our keepers to harvest for us
+    bool internal withdrawStakedOnMigration; // set to true to withdraw the deposited lp tokens before migration
 
     /* ========== CONSTRUCTOR ========== */
 
@@ -115,9 +116,16 @@ contract StrategyCurveSpell is BaseStrategy {
     {}
 
     // This allows us to manually harvest with our keeper as needed
+    function setWithdrawStakedOnMigration(bool _withdrawStakedOnMigration)
+        external
+        onlyEmergencyAuthorized
+    {
+        withdrawStakedOnMigration = _withdrawStakedOnMigration;
+    }
+
     function setForceHarvestTriggerOnce(bool _forceHarvestTriggerOnce)
         external
-        onlyAuthorized
+        onlyEmergencyAuthorized
     {
         forceHarvestTriggerOnce = _forceHarvestTriggerOnce;
     }
@@ -306,7 +314,7 @@ contract StrategyCurveSpell is BaseStrategy {
     // These functions are useful for setting parameters of the strategy that may need to be adjusted.
     // Set optimal token to sell harvested funds for depositing to Curve.
     // Default is MIM, but can be set to USDC or fUSDT as needed by strategist or governance.
-    function setOptimal(uint256 _optimal) external onlyAuthorized {
+    function setOptimal(uint256 _optimal) external onlyEmergencyAuthorized {
         if (_optimal == 0) {
             targetToken = address(mim);
         } else if (_optimal == 1) {
@@ -319,7 +327,7 @@ contract StrategyCurveSpell is BaseStrategy {
     }
 
     // spookyswap generally has better liquidity. if this changes, we can use spiritswap.
-    function setUseSpooky(bool useSpooky) external onlyAuthorized {
+    function setUseSpooky(bool useSpooky) external onlyEmergencyAuthorized {
         if (useSpooky) {
             router = IUniswapV2Router02(
                 0xF491e7B69E4244ad4002BC14e878a34207E38c29
