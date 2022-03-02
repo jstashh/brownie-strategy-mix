@@ -43,12 +43,12 @@ contract StrategyCurveSpell is BaseStrategy {
         IUniswapV2Router02(0xF491e7B69E4244ad4002BC14e878a34207E38c29); // this is the router we swap with, start with spookyswap
 
     address public targetToken; // this is the token we sell into - MIM, USDC, or fUSDT
+    bool public forceHarvestTriggerOnce; // only set this to true externally when we want to trigger our keepers to harvest for us
+    bool public withdrawStakedOnMigration = true; // set to true to withdraw the deposited lp tokens before migration
+    bool public shouldSellSpell = true; // set to true to sell any farmed spell
 
     uint256 internal poolId; // the pool we are depositing into in the rewards contract
     string internal stratName; // set our strategy name here
-    bool internal forceHarvestTriggerOnce; // only set this to true externally when we want to trigger our keepers to harvest for us
-    bool internal withdrawStakedOnMigration = true; // set to true to withdraw the deposited lp tokens before migration
-    bool internal shouldSellSpell = true; // set to true to sell any farmed spell
 
     /* ========== CONSTRUCTOR ========== */
 
