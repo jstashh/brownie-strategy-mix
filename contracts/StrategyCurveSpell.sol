@@ -25,7 +25,7 @@ contract StrategyCurveSpell is BaseStrategy {
     ISorbettiere internal constant sorbettiere =
         ISorbettiere(0x37Cf490255082ee50845EA4Ff783Eb9b6D1622ce);
 
-    // the routers used to sell spell into either MIM, USDC or fUSDT
+    // the routers used to sell SPELL into either MIM, USDC or fUSDT
     address internal constant spookyRouter =
         0xF491e7B69E4244ad4002BC14e878a34207E38c29;
     address internal constant spiritRouter =
