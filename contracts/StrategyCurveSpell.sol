@@ -280,6 +280,10 @@ contract StrategyCurveSpell is BaseStrategy {
         return balanceOfWant();
     }
 
+    function manualSell(uint256 _amount) external onlyEmergencyAuthorized {
+        _sellSpell(_amount);
+    }
+
     // Sells our SPELL for our target token
     function _sellSpell(uint256 _amount) internal {
         address[] memory path = new address[](3);

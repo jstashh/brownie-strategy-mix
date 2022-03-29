@@ -80,6 +80,13 @@ def token():
 def farmed():
     yield Contract("0x468003B688943977e6130F4F68F23aad939a1040")  # spell
 
+@pytest.fixture
+def farmed_whale(accounts):
+    yield accounts.at("0xBefE4f86F189C1c817446B71EB6aC90e3cb68E60", force=True)
+
+@pytest.fixture
+def rando(accounts):
+    yield accounts.at("0xB62432fC113d55228c364b567C499146ED6ca83A", force=True)
 
 @pytest.fixture
 def weth():
