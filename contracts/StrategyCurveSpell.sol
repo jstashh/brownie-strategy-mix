@@ -18,6 +18,8 @@ import {
 } from "@yearnvaults/contracts/BaseStrategy.sol";
 
 contract StrategyCurveSpell is BaseStrategy {
+    using SafeERC20 for IERC20;
+
     /* ========== STATE VARIABLES ========== */
     // these will likely change across different wants.
 
@@ -112,7 +114,7 @@ contract StrategyCurveSpell is BaseStrategy {
 
         uint256 _spellBalance = spell.balanceOf(address(this));
         if (_spellBalance > 0) {
-            spell.transfer(_newStrategy, _spellBalance);
+            spell.safeTransfer(_newStrategy, _spellBalance);
         }
     }
 
