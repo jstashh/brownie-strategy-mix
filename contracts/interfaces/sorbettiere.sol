@@ -20,6 +20,14 @@ interface ISorbettiere {
         //   4. User's `rewardDebt` gets updated.
     }
 
+    struct PoolInfo {
+        address stakingToken; // Contract address of staked token
+        uint256 stakingTokenTotalAmount; //Total amount of deposited tokens
+        uint256 accIcePerShare; // Accumulated ICE per share, times 1e12. See below.
+        uint32 lastRewardTime; // Last timestamp number that ICE distribution occurs.
+        uint16 allocPoint; // How many allocation points assigned to this pool. ICE to distribute per second.
+    }
+
     function withdraw(uint256 _pid, uint256 _amount) external;
 
     function deposit(uint256 _pid, uint256 _amount) external;
@@ -33,6 +41,8 @@ interface ISorbettiere {
         external
         view
         returns (UserInfo memory);
+
+    function poolInfo(uint256 _pid) external view returns (PoolInfo memory);
 
     function emergencyWithdraw(uint256 _pid) external;
 }

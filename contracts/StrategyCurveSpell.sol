@@ -77,6 +77,8 @@ contract StrategyCurveSpell is BaseStrategy {
         stratName = _name;
 
         // set the pool id that we'll use in the rewards contract to deposit into
+        address stakingToken = sorbettiere.poolInfo(_poolId).stakingToken;
+        require(stakingToken == address(want), "wrong pool");
         poolId = _poolId;
 
         // these are our approvals and path specific to this contract
