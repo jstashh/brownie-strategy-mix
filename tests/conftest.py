@@ -57,7 +57,7 @@ def sorbettiere():
 
 @pytest.fixture(scope="module")
 def sorbettiere_owner(accounts):
-    yield accounts.at("0x65960B6744Ec1873a38189C98A2802E21BE45e0A", force=True)
+    yield accounts.at("0x7b67907Db65841D51BE8448D8011AD3491834584", force=True)
 
 
 @pytest.fixture(scope="module")
