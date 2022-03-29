@@ -25,6 +25,12 @@ contract StrategyCurveSpell is BaseStrategy {
     ISorbettiere internal constant sorbettiere =
         ISorbettiere(0x37Cf490255082ee50845EA4Ff783Eb9b6D1622ce);
 
+    // the routers used to sell spell into either MIM, USDC or fUSDT
+    address internal constant spookyRouter =
+        0xF491e7B69E4244ad4002BC14e878a34207E38c29;
+    address internal constant spiritRouter =
+        0x16327E3FbDaCA3bcF7E38F5Af2599D2DDc33aE52;
+
     // used as the intermediary for selling spell into an underlying token of the curve pool
     IERC20 internal constant wftm =
         IERC20(0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83);
@@ -64,11 +70,8 @@ contract StrategyCurveSpell is BaseStrategy {
         // these are our standard approvals. want = Curve LP token
         want.approve(address(sorbettiere), type(uint256).max);
 
-        address spooky = 0xF491e7B69E4244ad4002BC14e878a34207E38c29;
-        address spirit = 0x16327E3FbDaCA3bcF7E38F5Af2599D2DDc33aE52;
-
-        spell.approve(spooky, type(uint256).max);
-        spell.approve(spirit, type(uint256).max);
+        spell.approve(spookyRouter, type(uint256).max);
+        spell.approve(spiritRouter, type(uint256).max);
 
         // set our strategy's name
         stratName = _name;
@@ -342,13 +345,9 @@ contract StrategyCurveSpell is BaseStrategy {
     // spookyswap generally has better liquidity. if this changes, we can use spiritswap.
     function setUseSpooky(bool useSpooky) external onlyEmergencyAuthorized {
         if (useSpooky) {
-            router = IUniswapV2Router02(
-                0xF491e7B69E4244ad4002BC14e878a34207E38c29
-            ); // spookyswap's router
+            router = IUniswapV2Router02(spookyRouter);
         } else {
-            router = IUniswapV2Router02(
-                0x16327E3FbDaCA3bcF7E38F5Af2599D2DDc33aE52
-            ); // spiritswap router
+            router = IUniswapV2Router02(spiritRouter);
         }
     }
 }
