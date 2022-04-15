@@ -1,7 +1,7 @@
 import pytest
 from brownie import config
 from brownie import Contract
-from brownie import chain
+from brownie import chain, interface
 
 
 @pytest.fixture(autouse=True)
@@ -11,7 +11,7 @@ def isolation(fn_isolation):
 
 @pytest.fixture(scope="module")
 def gov(accounts):
-    yield accounts.at("0x72a34AbafAB09b15E7191822A679f28E067C4a16", force=True)
+    yield accounts.at("0xb6bc033D34733329971B938fEf32faD7e98E56aD", force=True)
 
 
 @pytest.fixture
@@ -21,7 +21,7 @@ def user(accounts):
 
 @pytest.fixture(scope="module")
 def rewards(accounts):
-    yield accounts.at("0xBedf3Cf16ba1FcE6c3B751903Cf77E51d51E05b8", force=True)
+    yield accounts.at("0xD20Eb2390e675b000ADb8511F62B28404115A1a4", force=True)
 
 
 @pytest.fixture(scope="module")
@@ -36,12 +36,12 @@ def management(accounts):
 
 @pytest.fixture
 def strategist(accounts):
-    yield accounts.at("0xBedf3Cf16ba1FcE6c3B751903Cf77E51d51E05b8", force=True)
+    yield accounts.at("0xD20Eb2390e675b000ADb8511F62B28404115A1a4", force=True)
 
 
 @pytest.fixture(scope="module")
 def whale(accounts):
-    yield accounts.at("0xDbE692E262bD186Cab4E7e1bc0ecd4c3d4252DA1", force=True)
+    yield accounts.at("0x839De324a1ab773F76a53900D70Ac1B913d2B387", force=True)
 
 
 @pytest.fixture(scope="module")
@@ -52,12 +52,12 @@ def amount():
 
 @pytest.fixture(scope="module")
 def sorbettiere():
-    yield Contract("0x37Cf490255082ee50845EA4Ff783Eb9b6D1622ce")
+    yield Contract("0x839De324a1ab773F76a53900D70Ac1B913d2B387")
 
 
 @pytest.fixture(scope="module")
 def sorbettiere_owner(accounts):
-    yield accounts.at("0x7b67907Db65841D51BE8448D8011AD3491834584", force=True)
+    yield accounts.at("0xA71A021EF66B03E45E0d85590432DFCfa1b7174C", force=True)
 
 
 @pytest.fixture(scope="module")
@@ -66,23 +66,23 @@ def keeper(accounts):
 
 
 @pytest.fixture(scope="module")
-def curve_lp(accounts):
-    yield Contract("0x2dd7C9371965472E5A5fD28fbE165007c61439E1")
+def curve_lp():
+    yield Contract("0x30dF229cefa463e991e29D42DB0bae2e122B2AC7")
 
 
 @pytest.fixture
 def token():
-    token_address = "0x2dd7C9371965472E5A5fD28fbE165007c61439E1"  # Mim-2Pool
+    token_address = "0x30dF229cefa463e991e29D42DB0bae2e122B2AC7"  # Mim-2Pool
     yield Contract(token_address)
 
 
 @pytest.fixture
 def farmed():
-    yield Contract("0x468003B688943977e6130F4F68F23aad939a1040")  # spell
+    yield interface.ERC20("0x3E6648C5a70A150A88bCE65F4aD4d506Fe15d2AF")  # spell
 
 @pytest.fixture
 def farmed_whale(accounts):
-    yield accounts.at("0xBefE4f86F189C1c817446B71EB6aC90e3cb68E60", force=True)
+    yield accounts.at("0x8f93Eaae544e8f5EB077A1e09C1554067d9e2CA8", force=True)
 
 @pytest.fixture
 def rando(accounts):
@@ -90,7 +90,7 @@ def rando(accounts):
 
 @pytest.fixture
 def weth():
-    token_address = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+    token_address = "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1"
     yield Contract(token_address)
 
 
@@ -125,7 +125,7 @@ def pool_id():
 
 @pytest.fixture(scope="module")
 def healthCheck():
-    yield Contract("0xf13Cd6887C62B5beC145e30c38c4938c5E627fe0")
+    yield Contract("0x32059ccE723b4DD15dD5cb2a5187f814e6c470bC")
 
 
 @pytest.fixture

@@ -25,32 +25,28 @@ contract StrategyCurveSpell is BaseStrategy {
 
     // the rewards contract we deposit into and harvest SPELL from
     ISorbettiere internal constant sorbettiere =
-        ISorbettiere(0x37Cf490255082ee50845EA4Ff783Eb9b6D1622ce);
-
-    // the routers used to sell SPELL into either MIM, USDC or fUSDT
-    address internal constant spookyRouter =
-        0xF491e7B69E4244ad4002BC14e878a34207E38c29;
-    address internal constant spiritRouter =
-        0x16327E3FbDaCA3bcF7E38F5Af2599D2DDc33aE52;
+        ISorbettiere(0x839De324a1ab773F76a53900D70Ac1B913d2B387);
 
     // used as the intermediary for selling spell into an underlying token of the curve pool
-    IERC20 internal constant wftm =
-        IERC20(0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83);
+    IERC20 internal constant weth =
+        IERC20(0x82aF49447D8a07e3bd95BD0d56f35241523fBab1);
 
     // we use these to deposit to our curve pool
     IERC20 internal constant mim =
-        IERC20(0x82f0B8B456c1A451378467398982d4834b6829c1);
-    IERC20 internal constant fusdt =
-        IERC20(0x049d68029688eAbF473097a2fC38ef61633A3C7A);
+        IERC20(0xFEa7a6a0B346362BF88A9e4A88416B77a57D6c2A);
+    IERC20 internal constant usdt =
+        IERC20(0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9);
     IERC20 internal constant usdc =
-        IERC20(0x04068DA6C83AFCFA0e13ba15A6696662335D5B75);
+        IERC20(0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8);
 
     IERC20 internal constant spell =
-        IERC20(0x468003B688943977e6130F4F68F23aad939a1040);
+        IERC20(0x3E6648C5a70A150A88bCE65F4aD4d506Fe15d2AF);
     IUniswapV2Router02 public router =
-        IUniswapV2Router02(0xF491e7B69E4244ad4002BC14e878a34207E38c29); // this is the router we swap with, start with spookyswap
+        IUniswapV2Router02(0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506); // sushi router
+    ICurveZap public curveZapIn =
+        ICurveZap(0x7544Fe3d184b6B55D6B36c3FCA1157eE0Ba30287);
 
-    address public targetToken; // this is the token we sell into - MIM, USDC, or fUSDT
+    address public targetToken; // this is the token we sell into - MIM, USDC, or usdt
     bool public forceHarvestTriggerOnce; // only set this to true externally when we want to trigger our keepers to harvest for us
     bool public withdrawStakedOnMigration = true; // set to true to withdraw the deposited lp tokens before migration
     bool public shouldSellSpell = true; // set to true to sell any farmed spell
@@ -67,13 +63,12 @@ contract StrategyCurveSpell is BaseStrategy {
     ) public BaseStrategy(_vault) {
         // You can set these parameters on deployment to whatever you want
         maxReportDelay = 2 days; // 2 days in seconds
-        healthCheck = 0xf13Cd6887C62B5beC145e30c38c4938c5E627fe0;
+        healthCheck = 0x32059ccE723b4DD15dD5cb2a5187f814e6c470bC;
 
         // these are our standard approvals. want = Curve LP token
         want.approve(address(sorbettiere), type(uint256).max);
 
-        spell.approve(spookyRouter, type(uint256).max);
-        spell.approve(spiritRouter, type(uint256).max);
+        spell.approve(address(router), type(uint256).max);
 
         // set our strategy's name
         stratName = _name;
@@ -84,9 +79,9 @@ contract StrategyCurveSpell is BaseStrategy {
         poolId = _poolId;
 
         // these are our approvals and path specific to this contract
-        mim.approve(address(want), type(uint256).max);
-        usdc.approve(address(want), type(uint256).max);
-        fusdt.safeApprove(address(want), type(uint256).max);
+        mim.approve(address(curveZapIn), type(uint256).max);
+        usdc.approve(address(curveZapIn), type(uint256).max);
+        usdt.safeApprove(address(curveZapIn), type(uint256).max);
 
         // start off with mim
         targetToken = address(mim);
@@ -205,13 +200,14 @@ contract StrategyCurveSpell is BaseStrategy {
         }
 
         uint256 mimBalance = mim.balanceOf(address(this));
-        uint256 fusdtBalance = fusdt.balanceOf(address(this));
+        uint256 usdtBalance = usdt.balanceOf(address(this));
         uint256 usdcBalance = usdc.balanceOf(address(this));
 
         // deposit our balance to Curve if we have any
-        if (mimBalance > 0 || fusdtBalance > 0 || usdcBalance > 0) {
-            ICurveFi(address(want)).add_liquidity(
-                [mimBalance, fusdtBalance, usdcBalance],
+        if (mimBalance > 0 || usdcBalance > 0 || usdtBalance > 0) {
+            curveZapIn.add_liquidity(
+                address(want),
+                [mimBalance, usdcBalance, usdtBalance],
                 0
             );
         }
@@ -288,9 +284,9 @@ contract StrategyCurveSpell is BaseStrategy {
     function _sellSpell(uint256 _amount) internal {
         address[] memory path = new address[](3);
         path[0] = address(spell);
-        path[1] = address(wftm);
+        path[1] = address(weth);
         path[2] = address(targetToken);
-        IUniswapV2Router02(router).swapExactTokensForTokens(
+        router.swapExactTokensForTokens(
             _amount,
             uint256(0),
             path,
@@ -337,25 +333,16 @@ contract StrategyCurveSpell is BaseStrategy {
 
     // These functions are useful for setting parameters of the strategy that may need to be adjusted.
     // Set optimal token to sell harvested funds for depositing to Curve.
-    // Default is MIM, but can be set to USDC or fUSDT as needed by strategist or governance.
+    // Default is MIM, but can be set to USDC or usdt as needed by strategist or governance.
     function setOptimal(uint256 _optimal) external onlyEmergencyAuthorized {
         if (_optimal == 0) {
             targetToken = address(mim);
         } else if (_optimal == 1) {
             targetToken = address(usdc);
         } else if (_optimal == 2) {
-            targetToken = address(fusdt);
+            targetToken = address(usdt);
         } else {
             revert("incorrect token");
-        }
-    }
-
-    // spookyswap generally has better liquidity. if this changes, we can use spiritswap.
-    function setUseSpooky(bool useSpooky) external onlyEmergencyAuthorized {
-        if (useSpooky) {
-            router = IUniswapV2Router02(spookyRouter);
-        } else {
-            router = IUniswapV2Router02(spiritRouter);
         }
     }
 }
